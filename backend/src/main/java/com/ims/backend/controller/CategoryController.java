@@ -1,29 +1,40 @@
 package com.ims.backend.controller;
 
-import com.ims.backend.dto.AuthRequest;
-import com.ims.backend.dto.AuthResponse;
-import com.ims.backend.dto.RegisterRequest;
-import com.ims.backend.service.AuthService;
+import com.ims.backend.dto.CategoryDto;
+import com.ims.backend.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/auth")
-public class AuthController {
-    
-    private final AuthService authService;
+@RequestMapping("/api/categories")
+public class CategoryController {
+    private final CategoryService categoryService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request));
+    @GetMapping
+    public ResponseEntity<List<CategoryDto>> getAll() {
+        return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    @PostMapping
+    public ResponseEntity<CategoryDto> create(@Valid @RequestBody CategoryDto dto) {
+        return ResponseEntity.ok(categoryService.createCategory(dto));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoryDto> update(@PathVariable Long id, @Valid @RequestBody CategoryDto dto) {
+        return ResponseEntity.ok(categoryService.updateCategory(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
     }
 }
